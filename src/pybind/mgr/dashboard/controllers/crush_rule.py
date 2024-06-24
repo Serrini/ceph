@@ -47,6 +47,16 @@ class CrushRule(RESTController):
         }
         CephService.send_command('mon', 'osd crush rule create-replicated', **rule)
 
+    @RESTController.Resource('POST')
+    def create_erasure(self, name, profile, failure_domain, device_class):
+        rule = {
+            'name': name,
+            'profile': profile,
+            'type': failure_domain,
+            'class': device_class
+        }
+        CephService.send_command('mon', 'osd crush rule create-erasure', **rule)
+
     def delete(self, name):
         CephService.send_command('mon', 'osd crush rule rm', name=name)
 
