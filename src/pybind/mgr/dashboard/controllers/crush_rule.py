@@ -37,7 +37,7 @@ class CrushRule(RESTController):
             if r['rule_name'] == name:
                 return r
         raise NotFound('No such crush rule')
-    def create(self, name, failure_domain, device_class, root=None, profile=None, pool_type=None):
+    def create(self, name, failure_domain, device_class, root=None, profile=None, pool_type='replication'):
         if pool_type == 'erasure':
             rule = {
                 'name': name,
