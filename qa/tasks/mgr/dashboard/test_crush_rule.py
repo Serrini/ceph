@@ -49,8 +49,6 @@ class CrushRuleTest(DashboardTestCase):
         super(CrushRuleTest, cls).tearDownClass()
         cls._ceph_cmd(['osd', 'crush', 'rule', 'rm', 'some_rule'])
         cls._ceph_cmd(['osd', 'crush', 'rule', 'rm', 'another_rule'])
-        cls._ceph_cmd(['osd', 'crush', 'rule', 'rm', 'some_erasure_crush_rule'])
-        cls._ceph_cmd(['osd', 'crush', 'rule', 'rm', 'another_erasure_crush_rule'])
 
     def test_list(self):
         self._get('/api/crush_rule', version='2.0')
@@ -84,20 +82,15 @@ class CrushRuleTest(DashboardTestCase):
             'nodes': JList(JObj({}, allow_unknown=True)),
             'roots': JList(int)
         }))
-    def test_create_erasure(self):
-        self.create_and_delete_rule({
-            'pool_type': 'erasure',
-            'name': 'some_erasure_crush_rule',
-            'profile': 'default',
-            'failure_domain': 'osd',
-        })
+
+    @DashboardTestCase.RunAs('test', 'test', ['pool-manager', 'cluster-manager'])
     def test_create_erasure_with_ssd(self):
         data = self._get('/api/osd/0')
         self.assertStatus(200)
         device_class = data['osd_metadata']['default_device_class']
         self.create_and_delete_rule({
             'pool_type': 'erasure',
-            'name': 'another_erasure_crush_rule',
+            'name': 'some_erasure_crush_rule',
             'profile': 'default',
             'failure_domain': 'osd',
             'device_class': device_class
